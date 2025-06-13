@@ -1,0 +1,13 @@
+discord.py
+dotenv
+pypdf
+haystack-ai
+datasets>=2.6.1
+qdrant_client 
+qdrant-haystack
+google-ai-haystack
+docx
+transformers
+sentence-transformers>=3.0.0
+pydantic
+python-docx
