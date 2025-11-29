@@ -11,3 +11,4 @@ transformers
 sentence-transformers>=3.0.0
 pydantic
 python-docx
+trafilatura

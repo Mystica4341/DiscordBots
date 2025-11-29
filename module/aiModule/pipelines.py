@@ -85,9 +85,9 @@ def write_docs(file_url):
     CreateCollection()
     response = requests.get(file_url, stream=True)
     file_content = response.content
-    # Check file type
+    # Check file type from URL
     
-    # Phân tích URL
+    # URL parsing to get the file name
     parsed_url = urlparse(file_url)
     
     # Lấy phần đường dẫn và giải mã (unquote) nếu có ký tự đặc biệt
