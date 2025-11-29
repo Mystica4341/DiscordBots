@@ -17,6 +17,8 @@ from module.aiModule.generator import generator
 from module.aiModule.retrievers import retriever
 from module.aiModule.embedder import embedderDoc, embedderText
 from module.aiModule.promptBuilder import prompt_builder, template
+from module.aiModule.webSearch import web_search, link_content, html_converter
+from module.aiModule.fallbackRetrivers import FallbackRetriever
 
 """
 Train Pipeline
@@ -56,13 +58,18 @@ def qnaPipeline():
     try:
         QNAPipeline.add_component("text_embedder", embedderText())
         QNAPipeline.add_component("retriever", retriever())
+        # QNAPipeline.add_component("search", web_search)
+        # QNAPipeline.add_component("fetcher", link_content)
+        # QNAPipeline.add_component("converter", html_converter)
+        QNAPipeline.add_component("fallback", FallbackRetriever(web_search=web_search, fetcher=link_content, converter=html_converter))
         QNAPipeline.add_component("prompt_builder", prompt_builder)
         QNAPipeline.add_component("llm", generator)
     except Exception as e:
       pass
 
     QNAPipeline.connect("text_embedder","retriever.query_embedding")
-    QNAPipeline.connect("retriever.documents","prompt_builder.documents")
+    QNAPipeline.connect("retriever.documents","fallback.retriever_docs")
+    QNAPipeline.connect("fallback.documents","prompt_builder.documents")
     QNAPipeline.connect("prompt_builder.prompt", "llm.messages")
 
     return QNAPipeline
@@ -116,6 +123,7 @@ def chat(question):
         # Run the query pipeline with the chat history
         response = qnaPipeline().run({
             "text_embedder": {"text": question},
+            "fallback": {"query": question},
             "prompt_builder": {
                 "question": question,
                 "template": messages
