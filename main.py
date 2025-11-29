@@ -63,7 +63,8 @@ async def train(ctx: commands.Context, fileURL: Optional[str] = None):
         if fileURL is None:
             try:
                 attachment = ctx.message.attachments[0]
-                fileURL = attachment.url.split('?ex')[0]
+                fileURL = attachment.url
+                print(f"Attachment URL: {fileURL}")
             except IndexError:
                 await ctx.channel.send("Please attach a DOCX or PDF file.")
                 return

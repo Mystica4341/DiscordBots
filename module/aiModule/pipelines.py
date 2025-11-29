@@ -2,6 +2,7 @@ import os
 from haystack import Pipeline
 import requests
 from haystack.dataclasses import ChatMessage
+from urllib.parse import urlparse, unquote
 
 # Train Pipeline
 from haystack.components.converters import PyPDFToDocument, DOCXToDocument
@@ -58,9 +59,6 @@ def qnaPipeline():
     try:
         QNAPipeline.add_component("text_embedder", embedderText())
         QNAPipeline.add_component("retriever", retriever())
-        # QNAPipeline.add_component("search", web_search)
-        # QNAPipeline.add_component("fetcher", link_content)
-        # QNAPipeline.add_component("converter", html_converter)
         QNAPipeline.add_component("fallback", FallbackRetriever(web_search=web_search, fetcher=link_content, converter=html_converter))
         QNAPipeline.add_component("prompt_builder", prompt_builder)
         QNAPipeline.add_component("llm", generator)
@@ -88,9 +86,16 @@ def write_docs(file_url):
     response = requests.get(file_url, stream=True)
     file_content = response.content
     # Check file type
+    
+    # Phân tích URL
+    parsed_url = urlparse(file_url)
+    
+    # Lấy phần đường dẫn và giải mã (unquote) nếu có ký tự đặc biệt
+    # Phần này tự động loại bỏ mọi thứ sau dấu '?'
+    path = unquote(parsed_url.path)
 
-    file_name = os.path.basename(file_url)
-    print(f"File name: {file_name}")
+    file_name = os.path.basename(path)
+    print(f"File name: {file_name}, {file_url}")
     with open(file_name, "wb") as temp_file:
         temp_file.write(file_content)
     # Read file content
@@ -102,7 +107,7 @@ def write_docs(file_url):
         return f"Error during pipeline run: {e}"
     finally:
         os.remove(file_name)
-    return { "answer": f"Tao đã thêm thành công một bộ dữ liệu mới vào cơ sở dữ liệu." }
+    return { "answer": f"Tao đã thêm thành công **{file_url}** vào cơ sở dữ liệu." }
   
 messages = [template]
 
