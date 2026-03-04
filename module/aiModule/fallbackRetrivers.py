@@ -16,7 +16,7 @@ class FallbackRetriever:
             return {"documents": retriever_docs}
 
         # Nếu không có → fallback web search
-        print("⚠️ Không tìm thấy tài liệu trong Qdrant → sử dụng Web Search")
+        print("⚠️ Web search fallback activated")
 
         try:
             # links = self.web_search.run(query=query)["links"]
@@ -30,7 +30,7 @@ class FallbackRetriever:
             links = [item.get("link") for item in results if "link" in item]
 
             if not links:
-                print("⚠️ Web search không trả về link nào")
+                print("⚠️ Web search return null")
                 return {"documents": retriever_docs}
 
             # 2) FETCH HTML

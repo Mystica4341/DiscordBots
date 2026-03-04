@@ -139,8 +139,8 @@ def chat(question):
         if "llm" in response and "replies" in response["llm"] and response["llm"]["replies"]:
             aiResponse = response["llm"]["replies"][0]
     except Exception as e:
-        print(f"Error: {e}")
-        aiResponse = f"{e}"
+        print(f"Error: Từ Module AI {e}")
+        aiResponse = f"Từ Module AI {e}"
         
     # Append the AI response to the chat history
     messages.append(ChatMessage.from_assistant(aiResponse.text))

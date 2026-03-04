@@ -33,10 +33,10 @@ bot = Client(command_prefix='$', intents=intents)
 
 @bot.event
 async def on_guild_join(guild: discord.Guild):
-    # Copy tất cả global commands vào guild mới
+    # Copy global commands to the new guild
     bot.tree.copy_global_to(guild=guild)
 
-    # Sync slash commands cho guild đó
+    # Sync slash commands for the new guild
     await bot.tree.sync(guild=guild)
 
     print(f"Đã auto-register slash commands cho guild mới: {guild.name}")
@@ -54,7 +54,7 @@ async def chat(ctx: commands.Context, *, question: str):
         response = pipelines.chat(question)
         await ctx.channel.send(response['answer'])
     except Exception as e:
-        await ctx.channel.send(f"Error: {e}")
+        await ctx.channel.send(f"Error: Từ Bot {e}")
         
 @bot.command(name='train', aliases=['t'])
 async def train(ctx: commands.Context, fileURL: Optional[str] = None):
